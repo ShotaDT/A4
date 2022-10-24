@@ -26,6 +26,8 @@ $ for twid in $(awk -F '\t' '{print $5}' downloaded_tweets_extend_nolf2.tsv| gre
 
 Q3 Plot the sizes of clusters as a histogram to show how many clusters of each size resulted.
 See a4_q3.svg
+X-axis indicates number of people and Y-axis indicates number of retweet got.
+
 
 Q4 Find the 30 most frequent hashtags in these largest clusters of retweet you kept (for the users/tweets that got retweeted, not the users/tweets doing the retweet.
 $ for twid in $(awk -F '\t' '{print $5}' downloaded_tweets_extend_nolf2.tsv| grep type=retweeted  | sed 's/[^0-9]*//g'); do awk -F ' ' '{print $1, $5}' downloaded_tweets_extend_original_nolf2.tsv|  grep ${twid} ;done | awk -F ' ' '{print $2}'|sort| uniq -c| sort -nr | head -30
