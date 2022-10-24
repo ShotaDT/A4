@@ -1,0 +1,71 @@
+Q0 Find the top 10 users who got retweeted the most from other users (for this you need both files, use fgrep) (due to an Excel limitation that zeroes out the last digits in a long tweet ID, which was noticed by Vivian, this question was moved from A2 to A4).
+
+$ for twid in $(awk -F '\t' '{print $5}' downloaded_tweets_extend_nolf2.tsv| grep type=retweeted  | sed 's/[^0-9]*//g'); do awk -F ' ' '{print $1, $2}' downloaded_tweets_extend_original_nolf2.tsv|  grep ${twid} ;done | awk -F ' ' '{print $2}'|sort| uniq -c| sort -nr |head -10 
+1076 18831926
+ 438 1891490382
+ 362 163018653
+ 323 1495480590572961792
+ 316 1219232377605644289
+ 255 1231514832479948802
+ 208 42836999
+ 199 1229752606714728454
+ 193 380648579
+ 179 80802900
+
+
+Q1
+repeat A3 for retweet
+1) Represent influence between users as a directional graph of users, save as a list of lines
+output format is like  " 'userID got retweeted'  'userID who retweet' "
+
+$ awk -F '\t' '{print $5, $2}' downloaded_tweets_extend_nolf2.tsv| grep type=retweeted   |awk -F '[a-z=&\"]*'  '{print  $4, $5 }'|awk -F ' ' '{print $1,$3}'|sort -n > A4_q1.txt
+
+Q2  Produce clusters (groups of influence) by ranking the users who got retweeted by their number of retweets. Keep only the largest clusters by "cutting" at a threshold of 3; in order words, keep just the graph for users who got 3 or more retweet
+
+$ for twid in $(awk -F '\t' '{print $5}' downloaded_tweets_extend_nolf2.tsv| grep type=retweeted  | sed 's/[^0-9]*//g'); do awk -F ' ' '{print $1, $2}' downloaded_tweets_extend_original_nolf2.tsv|  grep ${twid} ;done | awk -F ' ' '{print $2}'|sort| uniq -c| sort -nr | awk '{if($1>2) {print}}' > a4_q2.txt
+
+Q3 Plot the sizes of clusters as a histogram to show how many clusters of each size resulted.
+See a4_q3.svg
+
+Q4 Find the 30 most frequent hashtags in these largest clusters of retweet you kept (for the users/tweets that got retweeted, not the users/tweets doing the retweet.
+$ for twid in $(awk -F '\t' '{print $5}' downloaded_tweets_extend_nolf2.tsv| grep type=retweeted  | sed 's/[^0-9]*//g'); do awk -F ' ' '{print $1, $5}' downloaded_tweets_extend_original_nolf2.tsv|  grep ${twid} ;done | awk -F ' ' '{print $2}'|sort| uniq -c| sort -nr | head -30
+> 1179 Ukraine
+ 963 LongCovid
+ 790 auspol
+ 764 COVID19
+ 388 StandWithUkraine
+ 342 PMQs
+ 270 BREAKING
+ 211 Russia
+ 191 ableg
+ 178 cdnpoli
+ 175 Omicron
+ 157 "Russia,Ukraine"
+ 153 COVIDisAirborne
+ 132 Mariupol
+ 121 onpoli
+ 121 Partygate
+ 118 SOTU
+ 118 Kyiv
+ 118 ChefsForUkraine
+ 116 OneOfUsAllOfUs
+ 115 insiders
+ 115 COVID
+ 112 Brexit
+ 106 CovidIsNotOver
+  97 "Ukraine,Russia"
+  95 longcovid
+  95 bcpoli
+  92 BA2
+  87 MitchPlease
+  84 ausvotes
+
+
+
+Q5  Plot a network cluster you got for retweets and a cluster for replies (from this and the previous assignment) in a network visualization tool, such as Gephi. As shown here, you can input your csv relationships and plot them. 
+Please see the png images
+
+Q6 what the networks you plotted show?
+For the retweet, you can see the network is very broad due to the inflence of function retweet, on the other hand, reply is more personal so network is narrower. For example, the user who got replied the most got 45 replies by some users, however, the user who got retweeted the most got 1076 retweets. The network between the users based on reply is more personal and small compared to the network betwen the users based on retweet.
+
+
